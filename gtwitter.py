@@ -3,7 +3,11 @@ import re
 import tweepy 
 from tweepy import OAuthHandler 
 from textblob import TextBlob 
-  
+import matplotlib.pyplot as plt
+from zipfile import ZipFile 
+import os 
+import time
+
 class TwitterClient(object): 
     ''' 
     Generic Twitter Class for sentiment analysis. 
@@ -51,7 +55,7 @@ class TwitterClient(object):
         else: 
             return 'negative'
   
-    def get_tweets(self, query, count = 10): 
+    def get_tweets(self, query, count): 
         ''' 
         Main function to fetch tweets and parse them. 
         '''
@@ -86,8 +90,109 @@ class TwitterClient(object):
         except tweepy.TweepError as e: 
             # print error (if any) 
             print("Error : " + str(e)) 
+            
+def drawing():
+        global all_figs
+        print("\n")
+        labels = ['Positive','Negative','Neutral']
+        colors = ['yellowgreen','lightcoral','gold']
+        for one_fig in all_figs:
+            all_total = 0
+            sentiments = {}
+            sentiments["Positive"] = one_fig[0]
+            sentiments["Negative"] = one_fig[1]
+            sentiments["Neutral"]  = one_fig[2]
+            all_total = one_fig[0] + one_fig[1] + one_fig[2]
+            sizes = []
+
+            sizes = [sentiments['Positive']/float(all_total), sentiments['Negative']/float(all_total), sentiments['Neutral']/float(all_total)]
+
+
+            plt.pie(sizes,labels=labels, colors=colors, autopct='%1.1f%%', shadow=True)
+            plt.axis('equal')
+
+            plt.title('Sentiment for the word - ' + str(one_fig[3])+"\n\n")
+            fig_name = "pie_" + str(one_fig[3]) + ".png"
+            # Save the figures
+            plt.savefig(fig_name)
+            #plt.close()
+            plt.show()
+
+def get_all_file_paths(directory): 
+  
+    # initializing empty file paths list 
+    file_paths = [] 
+  
+    # crawling through directory and subdirectories 
+    for root, directories, files in os.walk(directory): 
+        for filename in files: 
+            # join the two strings in order to form the full filepath. 
+            filepath = os.path.join(root, filename) 
+            file_paths.append(filepath) 
+  
+    # returning all file paths 
+    return file_paths
+            
+def zippy(word):
+    # path to folder which needs to be zipped 
+    directory = 'C:\\Users\\P.Harish Kumar\\Desktop\\Project twitter'
+  
+    # calling function to get all file paths in the directory 
+    file_paths = get_all_file_paths(directory) 
+  
+    # printing the list of all files to be zipped 
+    #print('Following files will be zipped:') 
+    #for file_name in file_paths: 
+        #print(file_name) 
+  
+    # writing files to a zipfile 
+    with ZipFile(word+'.zip','w') as zip: 
+        # writing each file one by one 
+        for file in file_paths: 
+            if '.zip' not in file and '.ipynb' not in file and '.py' not in file:
+                _,tail=os.path.split(file)
+                zip.write(tail) 
+  
+    #print('All files zipped successfully!')
+    delete()
+    
+    
+    
+def delete():
+    time.sleep(1)
+    directory = 'C:\\Users\\P.Harish Kumar\\Desktop\\Project twitter'
+    file_paths = get_all_file_paths(directory) 
+    for file in file_paths: 
+        if '.zip' not in file and '.ipynb' not in file and '.py' not in file:
+            _,tail=os.path.split(file)
+            os.remove(tail) 
+            
+def textw(word):
+    global ptweets,ntweets,tweets
+    new_path = 'C:\\Users\\P.Harish Kumar\\Desktop\\Project twitter\\'+word+'.txt'
+    tw = open(new_path,'w', encoding="utf-8")
+    
+    tw.write("\n\nPositive tweets percentage: "+str(100*len(ptweets)/len(tweets)))
+    tw.write("\nNegative tweets percentage: "+str(100*len(ntweets)/len(tweets)))
+    tw.write("\nNeutral tweets percentage: "+str(100*(len(tweets) - len(ntweets) - len(ptweets))/len(tweets)))
+    
+    tw.write("\n\nPositive tweets:\n\n")
+    for tweet in ptweets[:10]: 
+        tw.write("->"+str(tweet['text'])+"\n\n")
+        
+    tw.write("\n\nNegative tweets:\n\n") 
+    for tweet in ntweets[:10]: 
+        tw.write("->"+str(tweet['text'])+"\n\n")
+        
+    tw.write("\n\nNeutral tweets:\n\n") 
+    tweetr=[tweet for tweet in tweets if tweet['sentiment'] != 'positive' and tweet['sentiment'] != 'negative']
+    for tweet in tweetr[:10]: 
+        tw.write("->"+str(tweet['text'])+"\n\n")
+        
+    tw.close()
   
 def main(): 
+    global all_figs,ptweets,ntweets,tweets
     # creating object of TwitterClient Class 
     api = TwitterClient() 
     # calling function to get tweets 
@@ -108,7 +213,7 @@ def main():
         # percentage of negative tweets 
         print("Negative tweets percentage: {} %".format(100*len(ntweets)/len(tweets))) 
         # percentage of neutral tweets 
-        print("Neutral tweets percentage: {} % \ ".format(100*(len(tweets) - len(ntweets) - len(ptweets))/len(tweets))) 
+        print("Neutral tweets percentage: {} %".format(100*(len(tweets) - len(ntweets) - len(ptweets))/len(tweets))) 
       
         # printing first 5 positive tweets 
         print("\n\nPositive tweets:") 
@@ -119,6 +224,16 @@ def main():
         print("\n\nNegative tweets:") 
         for tweet in ntweets[:10]: 
             print(tweet['text']) 
+        draw_helper = []
+        draw_helper.append(len(ptweets))
+        draw_helper.append(len(ntweets))
+        draw_helper.append(len(tweets) - len(ntweets) - len(ptweets))
+        draw_helper.append(i)
+        all_figs=[draw_helper]
+        drawing()
+        #for writing into a text file
+        textw(i)
+        zippy(i)
   
 if __name__ == "__main__": 
     # calling main function 
