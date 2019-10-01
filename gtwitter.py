@@ -7,6 +7,8 @@ import matplotlib.pyplot as plt
 from zipfile import ZipFile 
 import os 
 import time
+import openpyxl
+import xlsxwriter
 
 class TwitterClient(object): 
     ''' 
@@ -156,10 +158,70 @@ def zippy(word):
     #print('All files zipped successfully!')
     delete()
     
-    
+def xlchart(i,a,b,c,d):
+    # Workbook() takes one, non-optional, argument   
+    # which is the filename that we want to create. 
+    workbook = xlsxwriter.Workbook('pie_'+i+'.xlsx') 
+      
+    # The workbook object is then used to add new   
+    # worksheet via the add_worksheet() method.  
+    worksheet = workbook.add_worksheet() 
+      
+    # Create a new Format object to formats cells 
+    # in worksheets using add_format() method . 
+      
+    # here we create bold format object . 
+    bold = workbook.add_format({'bold': 1}) 
+      
+    # create a data list . 
+    headings = ['Tweet :-', i] 
+      
+    data = [ 
+        ['Postive% :-', 'Negative% :-', 'Neutral% :-'], 
+        [a, b, c], 
+    ] 
+      
+    # Write a row of data starting from 'A1' 
+    # with bold format . 
+    worksheet.write_row('A1', headings, bold) 
+      
+    # Write a column of data starting from 
+    # A2, B2, C2 respectively. 
+    worksheet.write_column('A2', data[0],bold) 
+    worksheet.write_column('B2', data[1]) 
+      
+    # Create a chart object that can be added 
+    # to a worksheet using add_chart() method. 
+      
+    # here we create a pie chart object  
+    chart2 = workbook.add_chart({'type': 'pie'}) 
+      
+    # Add a data series to a chart  
+    # using add_series method.  
+        
+    # Configure the first series.  
+    # = Sheet1 !$A$1 is equivalent to ['Sheet1', 0, 0]. 
+    chart2.add_series({ 
+        'name': 'Sentimental Ananlysis for '+i, 
+        'categories': ['Sheet1', 1, 0, 3, 0], 
+        'values':     ['Sheet1', 1, 1, 3, 1], 
+        'points': [ 
+            {'fill': {'color': '#5ABA10'}}, 
+            {'fill': {'color': '#FE110E'}}, 
+            {'fill': {'color': '#FFFF00'}}, 
+        ], 
+    }) 
+      
+    # Add a chart title. 
+    chart2.set_title({'name': 'Sentimental Ananlysis for-'+i+' in '+str(d)+' tweets'}) 
+      
+    # Insert the chart into the worksheet (with an offset) 
+    # the top-left corner of a chart is anchored to cell C2.   
+    worksheet.insert_chart('C2', chart2, {'x_offset': 50, 'y_offset': 15}) 
+      
+    workbook.close() 
     
 def delete():
-    time.sleep(1)
     directory = 'C:\\Users\\P.Harish Kumar\\Desktop\\Project twitter'
     file_paths = get_all_file_paths(directory) 
     for file in file_paths: 
@@ -195,7 +257,9 @@ def main():
     global all_figs,ptweets,ntweets,tweets
     # creating object of TwitterClient Class 
     api = TwitterClient() 
-    # calling function to get tweets 
+    # calling function to get tweets
+    #wb = openpyxl.load_workbook("C:\\Users\\P.Harish Kumar\\Desktop\\Project twitter\\twt_ana.xlsx")
+    #s1 = wb.get_sheet_by_name('Sheet1')
     search_words = str(input("Enter Search words - separate them by comma: "))
     Total_tweet_count = int(input("Enter tweets to be pulled for each search word: "))
     #print search_words
@@ -224,6 +288,8 @@ def main():
         print("\n\nNegative tweets:") 
         for tweet in ntweets[:10]: 
             print(tweet['text']) 
+        xlchart(i,(100*len(ptweets)/len(tweets)),(100*len(ntweets)/len(tweets)),
+                (100*(len(tweets) - len(ntweets) - len(ptweets))/len(tweets)),Total_tweet_count)
         draw_helper = []
         draw_helper.append(len(ptweets))
         draw_helper.append(len(ntweets))
