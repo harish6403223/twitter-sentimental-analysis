@@ -34,7 +34,7 @@
 	</script>
 
 </head>
-<body style="background-image: url('{{ url_for( 'static', filename='image/bg.png') }}');">
+<body style="background-image: url('{{ url_for( 'static', filename='image/bg.jpeg') }}');">
 		<div class="wrapper1">
 	  <div class="hamburger">
 	       <i class="fas fa-bars"></i>
@@ -53,16 +53,12 @@
 	  </div>
 	</div>
 	<div class="wrapper" >
-	  <div class="search_box">
-	  	<form action="{{url_for('index1')}}">
+	  	<form class="search_box" action="{{url_for('index1')}}">
 	  		<input type="text" placeholder="Enter your tweets" name='tweet_w'>
 	      <a class="search-btn" >
 	      	<i class="fas fa-search"></i>
 	      </a>
 	  	</form>
-	      
-	      
-	  </div>
 	</div>
 </body>
 </html>
