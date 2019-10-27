@@ -2,63 +2,204 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Twitter Search Box</title>
-	<link rel="stylesheet" type="text/css" href="/static/styles.css">
+	<style >
+		@import url('https://fonts.googleapis.com/css?family=Roboto');
+@import url('https://fonts.googleapis.com/css?family=Ubuntu');
+@import url(https://fonts.googleapis.com/css?family=Leckerli+One);
+@import url(https://fonts.googleapis.com/css?family=Open+Sans);
+
+body{
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+h1 { 
+  font-family: 'Open Sans', sans-serif;
+  color: #fff;
+  margin: 0; 
+  text-align: center;
+  font-family: 'Leckerli One', cursive;
+  text-shadow: 0 5px rgba(0,0,0,.5);
+  font-size: 180px;
+  margin-top: 160px;
+}
+
+.row {
+  max-width: 80%;
+  margin: 0 auto;
+}
+
+.overlay {
+  height: 100%;
+  width: 0;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: rgb(0,0,0);
+  overflow-x: hidden;
+  transition: 0.5s;
+}
+
+.overlay-content {
+  font-family: 'Open Sans', sans-serif;
+  font-family: 'Leckerli One', cursive;
+  position: relative;
+  top: 25%;
+  width: 100%;
+  text-align: center;
+  margin-top: 30px;
+}
+
+.overlay a {
+  padding: 12px;
+  text-decoration: none;
+  font-size: 48px;
+  color: #818181;
+  display: block;
+  transition: 0.3s;
+}
+
+.overlay a:hover, .overlay a:focus {
+  color: #f1f1f1;
+}
+
+.overlay .closebtn {
+  position: absolute;
+  top: 5px;
+  right: 45px;
+  font-size: 170px;
+}
+
+.search-box{
+  margin: 0;
+  padding: 0;
+  font-family: 'Roboto', sans-serif;
+}
+
+input{
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  text-decoration: none;
+  box-sizing: border-box;
+  font-family: 'Ubuntu', sans-serif;
+}
+
+body {
+    padding: 0;
+    margin: 0;
+    height: 100vh;
+    width: 100%;
+}
+
+form{
+    position: relative;
+    top: 480px;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    transition: all 0.4s;
+    width: 50px;
+    height: 50px;
+    background: white;
+    box-sizing: border-box;
+    border-radius: 25px;
+    border: 4px solid white;
+    padding: 5px;
+}
+
+input{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;;
+    height: 42.5px;
+    line-height: 30px;
+    outline: 0;
+    border: 0;
+    display: none;
+    font-size: 1em;
+    border-radius: 20px;
+    padding: 0 20px;
+}
+
+.fa{
+    box-sizing: border-box;
+    padding: 10px;
+    width: 42.5px;
+    height: 42.5px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    border-radius: 50%;
+    color: #07051a;
+    text-align: center;
+    font-size: 1.2em;
+    transition: all 1s;
+}
+
+form:hover{
+    width: 700px;
+    cursor: pointer;
+}
+
+form:hover input{
+    display: block;
+}
+
+form:hover .fa{
+    background: #07051a;
+    color: white;
+}
+
+@media screen and (max-width: 768px){
+  form:hover{
+    width: 80%;
+    cursor: pointer;
+}
+.overlay a {font-size: 20px}
+  .overlay .closebtn {
+  font-size: 40px;
+  top: 15px;
+  right: 35px;
+  }
+}
+	</style>
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css">
 	<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-  <script
-  src="https://code.jquery.com/jquery-3.4.1.min.js"
-  integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
-  crossorigin="anonymous"></script>
-	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-	<script>
-		$(function(){
-			$(".hamburger .fa-times").hide();
-
-		$(".hamburger .fa-bars").click(function(){
-		    $(".hamburger .fa-times").show();
-		    $(this).hide();
-		    $(".nav-bar").addClass("active");
-		});
-
-		$(".hamburger .fa-times").click(function(){
-		    $(".hamburger .fa-bars").show();
-		    $(this).hide();
-		    $(".nav-bar").removeClass("active");
-		});	
-		});
-	</script>
-
+	
 </head>
-<body style="background-image: url('{{ url_for( 'static', filename='image/bg.jpeg') }}');">
-		<div class="wrapper1">
-	  <div class="hamburger">
-	       <i class="fas fa-bars"></i>
-	       <i class="fas fa-times"></i>
-	  </div>
-	  
-	  <div class="nav-bar">
-	    <ul>
-	        <li><a href="{{url_for('index')}}">home</a></li>
-	        <li><a href="#">profile</a></li>
-	        <li><a href="#">about</a></li>
-	        <li><a href="#">services</a></li>
-	        <li><a href="#">resume</a></li>
-	        <li><a href="#">contact</a></li>    
-	    </ul>    
-	  </div>
-	</div>
-	<div class="wrapper" >
-	  	<form class="search_box" action="{{url_for('index1')}}">
-	  		<input type="text" placeholder="Enter your tweets" name='tweet_w'>
-	      <a class="search-btn" >
-	      	<i class="fas fa-search"></i>
-	      </a>
-	  	</form>
-	</div>
+<body style="background-image: url('{{ url_for( 'static', filename='image/bg6.jpg') }}')">
+    <div id="myNav" class="overlay">
+  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+  <div class="overlay-content">
+    <a href="{{url_for('index')}}">HOME</a>
+    <a href="#">ABOUT</a>
+    <a href="#">RESUME</a>
+    <a href="#">CONTACT</a>
+  </div>
+</div>
+<span style="font-size:80px;color:white;cursor:pointer" onclick="openNav()">&#9776;</span>
+<script>
+function openNav() {
+  document.getElementById("myNav").style.width = "100%";
+}
+
+function closeNav() {
+  document.getElementById("myNav").style.width = "0%";
+}
+</script>
+    
+    <form class="search_box" action="{{url_for('main_p')}}">
+    <input type="text" placeholder="Enter your tweets ex. a,b,etc" name="tweet_w" required>
+    <a class="search-btn" >
+      <i class="fa fa-search" ></i>
+    </a>
+    
+    </form>
+<h1>Twitter</h1>	
 </body>
 </html>
