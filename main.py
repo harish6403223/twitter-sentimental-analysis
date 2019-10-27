@@ -6,6 +6,7 @@ from textblob import TextBlob
 import matplotlib.pyplot as plt
 import os,shutil
 import xlsxwriter
+import numpy as np
 
 
 class TwitterClient(object):
@@ -118,6 +119,29 @@ def drawing():
         # Save the figures
         plt.savefig(fig_name)
         plt.savefig('C:\\Users\\P.Harish Kumar\\Desktop\\Project twitter\\static\\pie_images\\'+fig_name)
+        plt.close()
+        
+def drawing1():
+    global all_figs
+    print("\n")
+    objects = ('Positive', 'Negative', 'Neutral')
+    for one_fig in all_figs:
+        all_total = one_fig[0] + one_fig[1] + one_fig[2]
+        sentiments = []
+        sentiments.append(100*one_fig[0]//all_total)
+        sentiments.append(100*one_fig[1]//all_total)
+        sentiments.append(100*one_fig[2]//all_total)
+        y_pos = np.arange(len(objects))
+
+        plt.bar(y_pos, sentiments, align='center', alpha=0.5) 
+        plt.xticks(y_pos, objects)
+        plt.ylabel('Percentage %')
+        
+
+        plt.title('Sentiment for the word - ' + str(one_fig[3]) + "\n\n")
+        fig_name = "bar_" + str(one_fig[3]) + ".png"
+        # Save the figures
+        plt.savefig(fig_name)
         plt.close()
 
 
@@ -244,13 +268,13 @@ def textw(word):
 
 def main_fun(astr, icnt):
     global all_figs, ptweets, ntweets, tweets
+    details=[]
     # creating object of TwitterClient Class
     api = TwitterClient()
-    # calling function to get tweets
-    # wb = openpyxl.load_workbook("C:\\Users\\P.Harish Kumar\\Desktop\\Project twitter\\twt_ana.xlsx")
-    # s1 = wb.get_sheet_by_name('Sheet1')
     search_words = astr
+    k=0
     Total_tweet_count = icnt
+    total=[]
     # print search_words
     search_words_list = search_words.split(",")
     for i in search_words_list:
@@ -276,13 +300,18 @@ def main_fun(astr, icnt):
         draw_helper.append(len(ntweets))
         draw_helper.append(len(tweets) - len(ntweets) - len(ptweets))
         draw_helper.append(i)
+        details.append([i,k,(len(ptweets)),(len(ntweets)),((len(tweets) - len(ntweets) - len(ptweets)))])
         all_figs = [draw_helper]
+        total.append(len(tweets))
         drawing()
+        drawing1()
         # for writing into a text file
         textw(i)
         movef(i)
+        k=k+1
     zippy()
     delete()
+    return(details,len(details),total)
 
 
 app = Flask(__name__)
@@ -294,11 +323,12 @@ def index():
     return render_template('index.html')
 
 
-@app.route('/index1')
-def index1():
+@app.route('/main_p')
+def main_p():
     tweet = request.args.get('tweet_w')
-    main_fun(str(tweet), 20)
-    return render_template('index1.html', tweet=tweet)
+    details,length,total=main_fun(str(tweet), 100)
+    #time.sleep(3)
+    return render_template('main_p.html', details=details,length=length,total=total)
 
 
 @app.errorhandler(404)
