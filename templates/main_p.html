@@ -118,6 +118,69 @@ function toggleDataSeries(e) {
 }
 
 {%endfor%}
+//line graph
+
+var chart = new CanvasJS.Chart("chartContainer", {
+  title: {
+    text: "Comparison Of Tweets"
+  },
+  axisX: {
+  	title: "Sentiments",
+  },
+  axisY2: {
+    title: "No.Of Tweets",
+  },
+  toolTip: {
+    shared: true
+  },
+  legend: {
+    cursor: "pointer",
+    verticalAlign: "top",
+    horizontalAlign: "center",
+    dockInsidePlotArea: true,
+    itemclick: toogleDataSeries1
+  },
+	data: [{
+    type:"line",
+    axisYType: "secondary",
+    name: '{{details[0][0]}}',
+    showInLegend: true,
+    markerSize: 0,
+    dataPoints: [   
+      { y: {{details[0][2]}}, label: "Positive" },
+      { y: {{details[0][3]}}, label: "Negative" },
+      { y: {{details[0][4]}}, label: "Neutral" }
+    ]
+  }
+  {%for i in range(1,length)%}
+  ,{
+    type:"line",
+    axisYType: "secondary",
+    name: '{{details[i][0]}}',
+    showInLegend: true,
+    markerSize: 0,
+    dataPoints: [   
+      { y: {{details[i][2]}}, label: "Positive" },
+      { y: {{details[i][3]}}, label: "Negative" },
+      { y: {{details[i][4]}}, label: "Neutral" }
+    ]
+  }
+  {%endfor%}
+
+
+
+  ]
+});
+chart.render();
+
+function toogleDataSeries1(e){
+  if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+    e.dataSeries.visible = false;
+  } else{
+    e.dataSeries.visible = true;
+  }
+  chart.render();
+}
 
 }
 
@@ -508,11 +571,37 @@ input[type="radio"] {
   to {opacity: 1}
 }
 
+
+/* Style buttons */
+.btn {
+  background-color: DodgerBlue;
+  border: none;
+  color: white;
+  padding: 12px 30px;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+/* Darker background on mouse-over */
+.btn:hover {
+  background-color: RoyalBlue;
+}
+
+
+
+
 	</style>
+
+
+
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 	<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 	
 </head>
+
+
+
 <body >
 	
     <div id="myNav" class="overlay">
@@ -625,7 +714,14 @@ function showSlides(n) {
 
 </script>
 
-<h4>Line Graph Analysis</h4>
-   	
+<h4>Line Graph Analysis :-</h4>
+
+<div id="chartContainer" style="margin-left:245px;border: 8px solid #0000FF;height: 800px; width: 80%;"></div>
+<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+
+
+<form method="get" action="{{ url_for( 'static', filename='t_ana.zip') }}">
+   <button type="submit" class="btn" style="margin-left:245px;margin-bottom: 30px;margin-top: 30px;width: 500px;"><i class="fa fa-download"></i> Download</button>
+</form>
 </body>
 </html>
