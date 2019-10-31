@@ -149,6 +149,8 @@ def zippy():
     dest='C:\\Users\\P.Harish Kumar\\Desktop\\Project twitter\\t_ana'
     dest1='C:\\Users\\P.Harish Kumar\\Desktop\\Project twitter\\static\\t_ana'
     shutil.make_archive(dest1, 'zip', dest)
+    
+    
 
 
 def movef(word):
