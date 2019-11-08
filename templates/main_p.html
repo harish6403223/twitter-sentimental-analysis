@@ -16,19 +16,21 @@ function drawChart() {
 {%for i in range(length)%}
   var data{{i}} = google.visualization.arrayToDataTable([
   ['Task', 'Hours per Day'],
-  ['Positive', {{details[i][2]}}],
-  ['Negative', {{details[i][3]}}],
-  ['Neutral', {{details[i][4]}}],
+  ['More Positive', {{details[i][2]}}],
+  ['Positive', {{details[i][3]}}],
+  ['Negative', {{details[i][4]}}],
+  ['More Negative', {{details[i][5]}}],
+  ['Neutral', {{details[i][6]}}],
 ]);
 
   // Optional; add a title and set the width and height of the chart
-  var options{{i}} = {'title':'Sentiment for the word - "{{details[i][0]}}" in '+{{details[i][2]+details[i][3]+details[i][4]}}+' tweets',titleTextStyle: {
+  var options{{i}} = {'title':'Sentiment for the word - "{{details[i][0]}}" in '+{{details[i][2]+details[i][3]+details[i][4]+details[i][5]+details[i][6]}}+' tweets',titleTextStyle: {
         color: '#0000FF',
         fontName: 'Times New Roman', // i.e. 
         fontSize: 40, // 12, 18 whatever you want (don't specify px)
         bold: true,    // true or false
         italic: true   // true of false
-    },is3D: true, 'width':1045, 'height':785};
+    },is3D: true, 'width':1045, 'height':825};
 
   // Display the chart inside the <div> element with id="piechart"
   
@@ -50,11 +52,11 @@ window.onload = function () {
 	{%for i in range(length)%}
 
 var chart{{i}} = new CanvasJS.Chart("chartContainer{{i}}", {
-	width: 1400,
+	width: 1500,
 	height: 700,
   animationEnabled: true,
   title:{
-    text: 'Sentiment for the word - "{{details[i][0]}}" in '+{{details[i][2]+details[i][3]+details[i][4]}}+' tweets'
+    text: 'Sentiment for the word - "{{details[i][0]}}" in '+{{details[i][2]+details[i][3]+details[i][4]+details[i][5]+details[i][6]}}+' tweets'
   },
   axisY: {
     title: "Tweets"
@@ -73,9 +75,11 @@ var chart{{i}} = new CanvasJS.Chart("chartContainer{{i}}", {
     name: "No. of Tweets",
     color: "gold",
     dataPoints: [
-      { y: {{details[i][2]}}, label: "Positive" },
-      { y: {{details[i][3]}}, label: "Negative" },
-      { y: {{details[i][4]}}, label: "Neutral" }
+      { y: {{details[i][6]}}, label: "Neutral" },
+      { y: {{details[i][5]}}, label: "More Negative" },
+      { y: {{details[i][4]}}, label: "Negative" },
+      { y: {{details[i][3]}}, label: "Positive" },
+      { y: {{details[i][2]}}, label: "More Positive" } 
     ]
   },
   {
@@ -84,9 +88,11 @@ var chart{{i}} = new CanvasJS.Chart("chartContainer{{i}}", {
     name: "Tweet %",
     color: "silver",
     dataPoints: [
-      { y: {{details[i][2]/total[i]*100}}, label: "Positive" },
-      { y: {{details[i][3]/total[i]*100}}, label: "Negative" },
-      { y: {{details[i][4]/total[i]*100}}, label: "Neutral" }
+      { y: {{details[i][6]/total[i]*100}}, label: "Neutral" },
+      { y: {{details[i][5]/total[i]*100}}, label: "More Negative" },
+      { y: {{details[i][4]/total[i]*100}}, label: "Negative" },
+      { y: {{details[i][3]/total[i]*100}}, label: "Positive" },
+      { y: {{details[i][2]/total[i]*100}}, label: "More Positive" } 
     ]
   }]
 });
@@ -147,9 +153,11 @@ var chart = new CanvasJS.Chart("chartContainer", {
     showInLegend: true,
     markerSize: 0,
     dataPoints: [   
-      { y: {{details[0][2]}}, label: "Positive" },
-      { y: {{details[0][3]}}, label: "Negative" },
-      { y: {{details[0][4]}}, label: "Neutral" }
+      { y: {{details[0][2]}}, label: "More Positive" },
+      { y: {{details[0][3]}}, label: "Positive" },
+      { y: {{details[0][4]}}, label: "Negative" },
+      { y: {{details[0][5]}}, label: "More Negative" },
+      { y: {{details[0][6]}}, label: "Neutral" }
     ]
   }
   {%for i in range(1,length)%}
@@ -160,9 +168,11 @@ var chart = new CanvasJS.Chart("chartContainer", {
     showInLegend: true,
     markerSize: 0,
     dataPoints: [   
-      { y: {{details[i][2]}}, label: "Positive" },
-      { y: {{details[i][3]}}, label: "Negative" },
-      { y: {{details[i][4]}}, label: "Neutral" }
+      { y: {{details[i][2]}}, label: "More Positive" },
+      { y: {{details[i][3]}}, label: "Positive" },
+      { y: {{details[i][4]}}, label: "Negative" },
+      { y: {{details[i][5]}}, label: "More Negative" },
+      { y: {{details[i][6]}}, label: "Neutral" }
     ]
   }
   {%endfor%}
@@ -196,20 +206,23 @@ function toogleDataSeries1(e){
 @import url(https://fonts.googleapis.com/css?family=Open+Sans);
 
 body{
-  background: #fff;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
 }
 
 .a1{
 	width: 100%;
 	height: 110px;
-	background-color: #696969;
+	background-color: #0036FF;
 	position: fixed;
 	z-index: 1;
 }
 
 h1{ 
   font-family: 'Open Sans', sans-serif;
-  color: #2B65EC;
+  color: #FEFEFE;
   margin-top: 0; 
   margin-left: 400px;
   width: 100%;
@@ -267,7 +280,7 @@ h4{
   z-index: 2;
   top: 0;
   left: 0;
-  background-color: #2B65EC;
+  background-color: rgb(0,0,0);
   overflow-x: hidden;
   transition: 0.5s;
 }
@@ -602,7 +615,7 @@ input[type="radio"] {
 
 
 
-<body >
+<body style="background-image: url('{{ url_for( 'static', filename='image/bg10.jpg') }}')">
 	
     <div id="myNav" class="overlay">
   <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
@@ -615,7 +628,7 @@ input[type="radio"] {
 </div>
 
 <div class="a1">
-	<span style="font-size:80px;color:#2B65EC;cursor:pointer;position: fixed;top: 0px" onclick="openNav()">&#9776;</span>
+	<span style="font-size:80px;color: #FEFEFE;cursor:pointer;position: fixed;top: 0px" onclick="openNav()">&#9776;</span>
 	<h1>Twitter Sentimental Analysis </h1>
 </div>
 
@@ -663,7 +676,6 @@ input[type="radio"] {
   <div class="mySlides fade" >
     <div class="numbertext">{{i+1}} / {{length}}</div>
     <div id="chartContainer{{i}}" style="height: 100%; width: 100%;"></div>
-    <div class="text">Slide {{i+1}}</div>
   </div>
   {%endfor%}
 
@@ -677,9 +689,9 @@ input[type="radio"] {
 <!-- The dots/circles -->
 
 <div style="text-align:center;margin-bottom: 120px;">
-  <label class="dot" onclick="currentSlide(1)"></label>
-  <label class="dot" onclick="currentSlide(2)"></label>
-  <label class="dot" onclick="currentSlide(3)"></label>
+  {%for i in range(length)%}
+  <label class="dot" onclick="currentSlide({{i+1}})"></label>
+  {%endfor%}
 </div>
 
 <script type="text/javascript">
