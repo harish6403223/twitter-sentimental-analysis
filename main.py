@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import os,shutil
 import xlsxwriter
 import numpy as np
+from flask import send_file
 
 
 class TwitterClient(object):
@@ -50,12 +51,20 @@ class TwitterClient(object):
         # create TextBlob object of passed tweet text
         analysis = TextBlob(self.clean_tweet(tweet))
         # set sentiment
-        if analysis.sentiment.polarity > 0:
+        if analysis.sentiment.polarity > 0.2:
+            print(analysis.sentiment.polarity,'more positive')
+            return 'more positive'
+        elif analysis.sentiment.polarity > 0:
+            print(analysis.sentiment.polarity,'positive')
             return 'positive'
-        elif analysis.sentiment.polarity == 0:
-            return 'neutral'
-        else:
+        elif analysis.sentiment.polarity < -0.2:
+            print(analysis.sentiment.polarity,'more negative')
+            return 'more negative'
+        elif analysis.sentiment.polarity < 0:
+            print(analysis.sentiment.polarity,'negative')
             return 'negative'
+        else:
+            return 'neutral'
 
     def get_tweets(self, query, count):
         '''
@@ -97,40 +106,44 @@ class TwitterClient(object):
 def drawing():
     global all_figs
     print("\n")
-    labels = ['Positive', 'Negative', 'Neutral']
-    colors = ['yellowgreen', 'lightcoral', 'gold']
+    labels = ['More Positive', 'Positive', 'Negative', 'More Negative', 'Neutral']
+    colors = ['yellowgreen', 'lightcoral', 'gold', 'blue', 'cyan']
     for one_fig in all_figs:
         all_total = 0
         sentiments = {}
-        sentiments["Positive"] = one_fig[0]
-        sentiments["Negative"] = one_fig[1]
-        sentiments["Neutral"] = one_fig[2]
-        all_total = one_fig[0] + one_fig[1] + one_fig[2]
+        sentiments["More Positive"] = one_fig[0]
+        sentiments["Positive"] = one_fig[1]
+        sentiments["Negative"] = one_fig[2]
+        sentiments["More Negative"] = one_fig[3]
+        sentiments["Neutral"] = one_fig[4]
+        all_total = one_fig[0] + one_fig[1] + one_fig[2] + one_fig[3] + one_fig[4]
         sizes = []
 
-        sizes = [sentiments['Positive'] / float(all_total), sentiments['Negative'] / float(all_total),
-                 sentiments['Neutral'] / float(all_total)]
+        sizes = [sentiments['More Positive'] / float(all_total), sentiments['Positive'] / float(all_total), sentiments['Negative'] / float(all_total),
+                  sentiments['More Negative'] / float(all_total), sentiments['Neutral'] / float(all_total)]
 
         plt.pie(sizes, labels=labels, colors=colors, autopct='%1.1f%%', shadow=True)
         plt.axis('equal')
 
-        plt.title('Sentiment for the word - ' + str(one_fig[3]) + "\n\n")
-        fig_name = "pie_" + str(one_fig[3]) + ".png"
+        plt.title('Sentiment for the word - ' + str(one_fig[5]) + "\n\n")
+        fig_name = "pie_" + str(one_fig[5]) + ".png"
         # Save the figures
-        plt.savefig(fig_name)
+        plt.savefig('C:\\Users\\P.Harish Kumar\\Desktop\\Project twitter\\'+fig_name)
         plt.savefig('C:\\Users\\P.Harish Kumar\\Desktop\\Project twitter\\static\\pie_images\\'+fig_name)
         plt.close()
         
 def drawing1():
     global all_figs
     print("\n")
-    objects = ('Positive', 'Negative', 'Neutral')
+    objects = ('More Positive', 'Positive', 'Negative', 'More Negative', 'Neutral')
     for one_fig in all_figs:
-        all_total = one_fig[0] + one_fig[1] + one_fig[2]
+        all_total = one_fig[0] + one_fig[1] + one_fig[2] + one_fig[3] + one_fig[4]
         sentiments = []
         sentiments.append(100*one_fig[0]//all_total)
         sentiments.append(100*one_fig[1]//all_total)
         sentiments.append(100*one_fig[2]//all_total)
+        sentiments.append(100*one_fig[3]//all_total)
+        sentiments.append(100*one_fig[4]//all_total)
         y_pos = np.arange(len(objects))
 
         plt.bar(y_pos, sentiments, align='center', alpha=0.5) 
@@ -138,10 +151,10 @@ def drawing1():
         plt.ylabel('Percentage %')
         
 
-        plt.title('Sentiment for the word - ' + str(one_fig[3]) + "\n\n")
-        fig_name = "bar_" + str(one_fig[3]) + ".png"
+        plt.title('Sentiment for the word - ' + str(one_fig[5]) + "\n\n")
+        fig_name = "bar_" + str(one_fig[5]) + ".png"
         # Save the figures
-        plt.savefig(fig_name)
+        plt.savefig('C:\\Users\\P.Harish Kumar\\Desktop\\Project twitter\\'+fig_name)
         plt.close()
 
 
@@ -149,8 +162,6 @@ def zippy():
     dest='C:\\Users\\P.Harish Kumar\\Desktop\\Project twitter\\t_ana'
     dest1='C:\\Users\\P.Harish Kumar\\Desktop\\Project twitter\\static\\t_ana'
     shutil.make_archive(dest1, 'zip', dest)
-    
-    
 
 
 def movef(word):
@@ -166,10 +177,10 @@ def movef(word):
 
 
 
-def xlchart(i, a, b, c, d):
+def xlchart(i, a, b, c, d, e, f):
     # Workbook() takes one, non-optional, argument
     # which is the filename that we want to create.
-    workbook = xlsxwriter.Workbook('pie_' + i + '.xlsx')
+    workbook = xlsxwriter.Workbook('C:\\Users\\P.Harish Kumar\\Desktop\\Project twitter\\pie_' + i + '.xlsx')
 
     # The workbook object is then used to add new
     # worksheet via the add_worksheet() method.
@@ -185,8 +196,8 @@ def xlchart(i, a, b, c, d):
     headings = ['Tweet :-', i]
 
     data = [
-        ['Postive% :-', 'Negative% :-', 'Neutral% :-'],
-        [a, b, c],
+        ['More Postive% :-', 'Postive% :-', 'Negative% :-', 'More Negative% :-', 'Neutral% :-'],
+        [a, b, c, d, e],
     ]
 
     # Write a row of data starting from 'A1'
@@ -211,21 +222,23 @@ def xlchart(i, a, b, c, d):
     # = Sheet1 !$A$1 is equivalent to ['Sheet1', 0, 0].
     chart2.add_series({
         'name': 'Sentimental Ananlysis for ' + i,
-        'categories': ['Sheet1', 1, 0, 3, 0],
-        'values': ['Sheet1', 1, 1, 3, 1],
+        'categories': ['Sheet1', 1, 0, 5, 0],
+        'values': ['Sheet1', 1, 1, 5, 1],
         'points': [
             {'fill': {'color': '#5ABA10'}},
             {'fill': {'color': '#FE110E'}},
             {'fill': {'color': '#FFFF00'}},
+            {'fill': {'color': '#0D3AE4'}},
+            {'fill': {'color': '#FF830E'}},
         ],
     })
 
     # Add a chart title.
-    chart2.set_title({'name': 'Sentimental Ananlysis for-' + i + ' in last ' + str(d) + ' tweets'})
+    chart2.set_title({'name': 'Sentimental Ananlysis for-' + i + ' in last ' + str(f) + ' tweets'})
 
     # Insert the chart into the worksheet (with an offset)
     # the top-left corner of a chart is anchored to cell C2.
-    worksheet.insert_chart('C2', chart2, {'x_offset': 50, 'y_offset': 15})
+    worksheet.insert_chart('C2', chart2, {'x_offset': 100, 'y_offset': 60})
 
     workbook.close()
 
@@ -244,14 +257,20 @@ def delete1():
 
 
 def textw(word):
-    global ptweets, ntweets, tweets
+    global ptweets, ntweets, mptweets, mntweets, tweets
     new_path = 'C:\\Users\\P.Harish Kumar\\Desktop\\Project twitter\\' + word + '.txt'
     tw = open(new_path, 'w', encoding="utf-8")
 
+    tw.write("\n\nMore Positive tweets percentage: " + str(100 * len(mptweets) / len(tweets)))
     tw.write("\n\nPositive tweets percentage: " + str(100 * len(ptweets) / len(tweets)))
     tw.write("\nNegative tweets percentage: " + str(100 * len(ntweets) / len(tweets)))
-    tw.write("\nNeutral tweets percentage: " + str(100 * (len(tweets) - len(ntweets) - len(ptweets)) / len(tweets)))
+    tw.write("\nMore Negative tweets percentage: " + str(100 * len(mntweets) / len(tweets)))
+    tw.write("\nNeutral tweets percentage: " + str(100 * (len(tweets) - len(ntweets) - len(ptweets) - len(mntweets) - len(mptweets)) / len(tweets)))
 
+    tw.write("\n\nMore Positive tweets:\n\n")
+    for tweet in mptweets[:10]:
+        tw.write("->" + str(tweet['text']) + "\n\n")
+        
     tw.write("\n\nPositive tweets:\n\n")
     for tweet in ptweets[:10]:
         tw.write("->" + str(tweet['text']) + "\n\n")
@@ -259,9 +278,13 @@ def textw(word):
     tw.write("\n\nNegative tweets:\n\n")
     for tweet in ntweets[:10]:
         tw.write("->" + str(tweet['text']) + "\n\n")
+        
+    tw.write("\n\nMore Negative tweets:\n\n")
+    for tweet in mntweets[:10]:
+        tw.write("->" + str(tweet['text']) + "\n\n")
 
     tw.write("\n\nNeutral tweets:\n\n")
-    tweetr = [tweet for tweet in tweets if tweet['sentiment'] != 'positive' and tweet['sentiment'] != 'negative']
+    tweetr = [tweet for tweet in tweets if tweet['sentiment'] != 'positive' and tweet['sentiment'] != 'negative' and tweet['sentiment'] != 'more positive' and tweet['sentiment'] != 'more negative']
     for tweet in tweetr[:10]:
         tw.write("->" + str(tweet['text']) + "\n\n")
 
@@ -269,7 +292,7 @@ def textw(word):
 
 
 def main_fun(astr, icnt):
-    global all_figs, ptweets, ntweets, tweets
+    global all_figs, ptweets, mptweets, ntweets, mntweets, tweets
     details=[]
     # creating object of TwitterClient Class
     api = TwitterClient()
@@ -285,24 +308,31 @@ def main_fun(astr, icnt):
 
         # picking positive tweets from tweets
         ptweets = [tweet for tweet in tweets if tweet['sentiment'] == 'positive']
+        mptweets = [tweet for tweet in tweets if tweet['sentiment'] == 'more positive']
         # percentage of positive tweets
+        print("More Positive tweets percentage: {} %".format(100 * len(mptweets) / len(tweets)))
         print("Positive tweets percentage: {} %".format(100 * len(ptweets) / len(tweets)))
         # picking negative tweets from tweets
         ntweets = [tweet for tweet in tweets if tweet['sentiment'] == 'negative']
+        mntweets = [tweet for tweet in tweets if tweet['sentiment'] == 'more negative']
         # percentage of negative tweets
         print("Negative tweets percentage: {} %".format(100 * len(ntweets) / len(tweets)))
+        print("More Negative tweets percentage: {} %".format(100 * len(mntweets) / len(tweets)))
         # percentage of neutral tweets
-        print("Neutral tweets percentage: {} %".format(100 * (len(tweets) - len(ntweets) - len(ptweets)) / len(tweets)))
+        print("Neutral tweets percentage: {} %".format(100 * (len(tweets) - len(ntweets) - len(ptweets) - len(mntweets) - len(mptweets)) / len(tweets)))
 
-        # printing first 5 positive tweets
-        xlchart(i, (100 * len(ptweets) / len(tweets)), (100 * len(ntweets) / len(tweets)),
-                (100 * (len(tweets) - len(ntweets) - len(ptweets)) / len(tweets)), Total_tweet_count)
+        
+        
+        xlchart(i, (100 * len(mptweets) / len(tweets)), (100 * len(ptweets) / len(tweets)), (100 * len(ntweets) / len(tweets)), (100 * len(mntweets) / len(tweets))
+                ,(100 * (len(tweets) - len(ntweets) - len(ptweets) - len(mntweets) - len(mptweets)) / len(tweets)), Total_tweet_count)
         draw_helper = []
+        draw_helper.append(len(mptweets))
         draw_helper.append(len(ptweets))
         draw_helper.append(len(ntweets))
-        draw_helper.append(len(tweets) - len(ntweets) - len(ptweets))
+        draw_helper.append(len(mntweets))
+        draw_helper.append(len(tweets) - len(ntweets) - len(ptweets)  - len(mntweets) - len(mptweets))
         draw_helper.append(i)
-        details.append([i,k,(len(ptweets)),(len(ntweets)),((len(tweets) - len(ntweets) - len(ptweets)))])
+        details.append([i,k,(len(mptweets)),(len(ptweets)),(len(ntweets)),(len(mntweets)),((len(tweets) - len(ntweets) - len(ptweets) - len(mntweets) - len(mptweets)))])
         all_figs = [draw_helper]
         total.append(len(tweets))
         drawing()
