@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request,redirect
 import re
 import tweepy
 from tweepy import OAuthHandler
@@ -7,7 +7,9 @@ import matplotlib.pyplot as plt
 import os,shutil
 import xlsxwriter
 import numpy as np
-from flask import send_file
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
+import forms
 
 
 class TwitterClient(object):
@@ -52,16 +54,12 @@ class TwitterClient(object):
         analysis = TextBlob(self.clean_tweet(tweet))
         # set sentiment
         if analysis.sentiment.polarity > 0.2:
-            print(analysis.sentiment.polarity,'more positive')
             return 'more positive'
         elif analysis.sentiment.polarity > 0:
-            print(analysis.sentiment.polarity,'positive')
             return 'positive'
         elif analysis.sentiment.polarity < -0.2:
-            print(analysis.sentiment.polarity,'more negative')
             return 'more negative'
         elif analysis.sentiment.polarity < 0:
-            print(analysis.sentiment.polarity,'negative')
             return 'negative'
         else:
             return 'neutral'
@@ -348,8 +346,67 @@ def main_fun(astr, icnt):
 
 app = Flask(__name__)
 
+app.config['SECRET_KEY'] = 'mysecret'
 
-@app.route('/')
+basedir = os.path.abspath(os.path.dirname(__file__))
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+os.path.join(basedir, 'data.sqlite')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db = SQLAlchemy(app)
+Migrate(app,db)
+
+class Twitter_data(db.Model):
+
+    __tablename__ = 'Twitter_data'
+
+    user = db.Column(db.String(30), primary_key=True)
+    password= db.Column(db.String(30))
+    email = db.Column(db.String(64))
+    consumer_key = db.Column(db.String(64))
+    consumer_secret = db.Column(db.String(64))
+    access_token = db.Column(db.String(64))
+    access_token_secret = db.Column(db.String(64))
+    face_key = db.Column(db.String(30))
+    
+
+    def __init__(self, email, user, password):
+        self.email = email
+        self.user = user
+        self.password = password
+
+    def __repr__(self):
+        return f"Username {self.user} , password {self.password}"
+
+db.create_all()
+
+@app.route('/',methods=['GET','POST'])
+def login():
+    delete1()
+
+    form1=forms.login1()
+    form2=forms.register1()
+
+    if form1.submit.data==True:
+        user=Twitter_data.query.get(form1.user1.data)
+        if user!=None and user.password==form1.pass1.data:
+            return render_template('index.html')
+        else:
+            return render_template('login.html',check=3)
+    
+    if form2.submit1.data==True:
+        user=Twitter_data.query.get(form2.user.data)
+        if user==None and form2.pass2.data==form2.pass3.data:
+            new_user=Twitter_data(form2.email.data,form2.user.data,form2.pass2.data)
+            db.session.add(new_user)
+            db.session.commit()
+            return render_template('login.html',check=1)
+        else:
+            return render_template('login.html',check=2)
+        
+
+    return render_template('login.html',check=0)
+
+@app.route('/index')
 def index():
     delete1()
     return render_template('index.html')
@@ -359,7 +416,6 @@ def index():
 def main_p():
     tweet = request.args.get('tweet_w')
     details,length,total=main_fun(str(tweet), 100)
-    #time.sleep(3)
     return render_template('main_p.html', details=details,length=length,total=total)
 
 
