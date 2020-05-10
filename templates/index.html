@@ -176,10 +176,10 @@ form:hover .fa{
     <div id="myNav" class="overlay">
   <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
   <div class="overlay-content">
-    <a href="{{url_for('index')}}">HOME</a>
-    <a href="#">ABOUT</a>
-    <a href="#">RESUME</a>
-    <a href="#">CONTACT</a>
+    <a href="{{url_for('button')}}">HOME</a>
+    <a href="{{url_for('about')}}">ABOUT</a>
+    <a href="{{url_for('contact')}}">CONTACT</a>
+    <a href="{{url_for('login')}}">Logout</a>
   </div>
 </div>
 <span style="font-size:80px;color:white;cursor:pointer" onclick="openNav()">&#9776;</span>
@@ -195,7 +195,7 @@ function closeNav() {
     
     <form class="search_box" action="{{url_for('main_p')}}">
     <input type="text" placeholder="Enter your tweets ex. a,b,etc" name="tweet_w" required>
-    <a class="search-btn" >
+    <a class="search-btn" type="submit" name="submit3">
       <i class="fa fa-search" ></i>
     </a>
     

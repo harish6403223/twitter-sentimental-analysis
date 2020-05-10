@@ -54,6 +54,7 @@ h3{
   margin-left:180px;
   margin-bottom: 1px;
   text-align:left;
+  box-shadow:0 12px 15px 0 rgba(0,0,0,.24),0 17px 50px 0 rgba(0,0,0,.19);
 }
 p {
   margin-top: 445px;
@@ -346,10 +347,9 @@ a{color:inherit;text-decoration:none}
     <div id="myNav" class="overlay">
   <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
   <div class="overlay-content">
-    <a href="{{url_for('index')}}">HOME</a>
-    <a href="#">ABOUT</a>
-    <a href="#">RESUME</a>
-    <a href="#">CONTACT</a>
+    <a href="{{url_for('login')}}">HOME</a>
+    <a href="{{url_for('about')}}">ABOUT</a>
+    <a href="{{url_for('contact')}}">CONTACT</a>
   </div>
 </div>
 
@@ -368,20 +368,17 @@ a{color:inherit;text-decoration:none}
       <form class="sign-in-htm" method="POST">
         <div class="group">
           <label for="user1" class="label">Username</label>
-          <input id="user1" name="user1" type="text" class="input" required="">
+          <input id="user1" name="user1" type="text" placeholder="ex. abc" class="input" required="">
         </div>
         <div class="group">
           <label for="pass1" class="label">Password</label>
-          <input id="pass1" name="pass1" type="password" class="input" data-type="password" required="">
+          <input id="pass1" name="pass1" placeholder="***"  type="password" class="input" data-type="password" required="">
         </div>
   
         <div class="group" style="margin-top: 40px;">
           <input id="submit" name="submit" type="submit" class="button" value="Sign In">
         </div>
         <div class="hr"></div>
-        <div class="foot-lnk">
-          <a href="#forgot">Forgot Password?</a>
-        </div>
 
         {%if check==2%}
         <div class="mssg" style="color: red;">Sign Up error</div>
@@ -393,19 +390,19 @@ a{color:inherit;text-decoration:none}
       <form class="sign-up-htm" method="POST">
         <div class="group">
           <label for="user" class="label">Username</label>
-          <input id="user" name="user" type="text" class="input" required="">
+          <input id="user" name="user" placeholder="ex. abc"  type="text" class="input" required="">
         </div>
         <div class="group">
           <label for="pass2" class="label">Password</label>
-          <input id="pass2" name="pass2" type="password" class="input" data-type="password" required="">
+          <input id="pass2" name="pass2" placeholder="***"  type="password" class="input" data-type="password" required="">
         </div>
         <div class="group">
           <label for="pass3" class="label">Repeat Password</label>
-          <input id="pass3" name="pass3" type="password" class="input" data-type="password" required="">
+          <input id="pass3" name="pass3" placeholder="***"  type="password" class="input" data-type="password" required="">
         </div>
         <div class="group">
           <label for="email" class="label">Email Address</label>
-          <input id="email" name="email" type="text" class="input" required="">
+          <input id="email" name="email" placeholder="ex. a@abc.com"  type="text" class="input" required="">
         </div>
         <div class="group" style="margin-top: 30px;">
           <input id="submit1" name="submit1" type="submit" class="button" value="Sign Up">
@@ -422,7 +419,7 @@ a{color:inherit;text-decoration:none}
 
 <h2>Welcome to the</h2>
 <h3>Sentiment Analy Web</h3>
-<p>This website do the analysis of twitter data and seperates the positive, negative and neutral sentiments in the form of pie chart, bar graph and line graphs so the analysis is clear. We just have to search the required fields and we will the desired output</p>
+<p>This website do the analysis of twitter data and seperates the positive, negative and neutral sentiments based on polarity in the form of pie chart, bar graph and line graphs so, that the analysis is clear. We just have to search the required fields and we will have the desired output</p>
   <br>
   <button>READ MORE</button>
     </div>

@@ -45,6 +45,21 @@ body{
 	z-index: 1;
 }
 
+#wrapper{
+  width: 80%;
+  height: 800px;
+  background: rgba(40,57,101,.9);
+  font-family: 'Montserrat', sans-serif;
+  box-sizing:border-box;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 12px 15px 0 rgba(0,0,0,.24),0 17px 50px 0 rgba(0,0,0,.19);
+  border-radius: 20%;
+
+}
+
+
 h1{ 
   font-family: 'Open Sans', sans-serif;
   color: #FEFEFE;
@@ -54,21 +69,6 @@ h1{
   font-family: 'Leckerli One', cursive;
   text-shadow: 0 2px rgba(0,0,0,.5);
   font-size: 80px;
-}
-
-
-#wrapper{
-  width: 50%;
-  height: auto;
-  background: rgba(40,57,101,.9);
-  font-family: 'Montserrat', sans-serif;
-  box-sizing:border-box;
-  display: flex;
-  align-items:center;
-  justify-content:center;
-  box-shadow:0 12px 15px 0 rgba(0,0,0,.24),0 17px 50px 0 rgba(0,0,0,.19);
-  border-radius: 20%;
-
 }
 
 
@@ -122,7 +122,6 @@ h1{
 body {
     padding: 0;
     margin: 0;
-    height: 100vh;
     width: 100%;
 }
 
@@ -153,7 +152,22 @@ body {
 }
 
 
+/*content*/
+body, html {
+  height: 100%;
+  font-family: "Inconsolata", sans-serif;
+    }
 
+.bgimg {
+  background-position: center;
+  background-size: cover;
+  background-image: url("7.jpg");
+  min-height: 75%;
+}
+
+.menu {
+  display: none;
+}
 
 	</style>
 
@@ -173,34 +187,33 @@ body {
     <div id="myNav" class="overlay">
   <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
   <div class="overlay-content">
-    <a href="{{url_for('button')}}">HOME</a>
-    <a href="{{url_for('about')}}">ABOUT</a>
-    <a href="#">RESUME</a>
+    <a href="{{url_for('login')}}">HOME</a>
+    <a href="#">ABOUT</a>
     <a href="{{url_for('contact')}}">CONTACT</a>
-    <a href="{{url_for('login')}}">Logout</a>
   </div>
 </div>
 
 <div class="a1">
 	<span style="font-size:80px;color: #FEFEFE;cursor:pointer;position: fixed;top: 0px" onclick="openNav()">&#9776;</span>
-	<h1>Twitter Sentimental Analysis </h1> 
- <div id="wrapper" style=" margin-left: 3%;margin-bottom: 50px;" > 
-  <div>
+	<h1>Twitter Sentimental Analysis </h1>
 
-    <p style="color:white; font-size: 80px;">Sorry</p>
-    <p class="lead" style="color:white;font-size: 20pxs">Could not find the page.</p>
-<hr class="my-4">
+<div id="wrapper" style=" margin-left: 10%;margin-bottom: 50px;" >
 
 
-<form action="{{ url_for( 'index') }}">
-   <button type="submit" class="btn" style="margin-bottom: 30px;margin-top: 30px;width: 500px;">Return to Home</button>
-</form>
-
-  </div>
-
+<!-- About Container -->
+<div class="w3-container" id="about">
+  <div class="w3-content" style="max-width:1000px;color: white;">
+      <h5 class="w3-center w3-padding-64" style="font-size: 40px;"><span class="w3-tag w3-wide">ABOUT THE WEBSITE</span></h5>
+      <p>This website do the analysis of twitter data and seperates the positive, negative and neutral sentiments in the form of pie chart, bar graph and line graphs so the analysis is clear. We just have to search the required fields and we will the desired output</p>
+      <h3 style="font-size: 30px;">What is sentiment analysis?</h3>
+    <p>Sentiment Analysis is the process of ‘computationally’ determining whether a piece of writing is positive, negative or neutral. It’s also known as opinion mining, deriving the opinion or attitude of a speaker.</p>
+      <h3 style="font-size: 30px;">Why sentiment analysis?</h3>
+<p>Business: In marketing field companies use it to develop their strategies, to understand customers’ feelings towards products or brand, how people respond to their campaigns or product launches and why consumers don’t buy some
+products.
+<p>Politics: In political field, it is used to keep track of political view, to detect consistency and inconsistency between statements and actions at the government level. It can be used to predict election results as well!</p>
+<p>Public Actions: Sentiment analysis also is used to monitor and analyse social phenomena, for the spotting of potentially dangerous situations and determining the general mood of the blogosphere.</p>
+      </div>
 </div>
-</div>
-
 
 
 </body>

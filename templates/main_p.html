@@ -489,6 +489,9 @@ input[type="radio"] {
 {% endfor %}
 
 
+
+/*bar chart*/
+
 .slideshow-container {
   width: 1500px;
   height: 700px;
@@ -620,10 +623,10 @@ input[type="radio"] {
     <div id="myNav" class="overlay">
   <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
   <div class="overlay-content">
-    <a href="{{url_for('index')}}">HOME</a>
-    <a href="#">ABOUT</a>
-    <a href="#">RESUME</a>
-    <a href="#">CONTACT</a>
+    <a href="{{url_for('button')}}">HOME</a>
+    <a href="{{url_for('about')}}">ABOUT</a>
+    <a href="{{url_for('contact')}}">CONTACT</a>
+    <a href="{{url_for('login')}}">Logout</a>
   </div>
 </div>
 
