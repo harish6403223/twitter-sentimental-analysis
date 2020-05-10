@@ -17,7 +17,12 @@ class register1(FlaskForm):
 	submit1=SubmitField('submit')
 
 	
-
+class tweet_f(FlaskForm):
+	ck=StringField('ck')
+	cs=StringField('cs')
+	at=StringField('at')
+	ats=StringField('ats')
+	submit2=SubmitField('submit2')
 '''class twitter_det(FlaskForm):
 	consumer_key = StringField(' ')
     consumer_secret = StringField(' ')

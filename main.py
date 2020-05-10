@@ -17,15 +17,15 @@ class TwitterClient(object):
     Generic Twitter Class for sentiment analysis.
     '''
 
-    def __init__(self):
+    def __init__(self,lgn):
         '''
         Class constructor or initialization method.
         '''
         # keys and tokens from the Twitter Dev Console
-        consumer_key = 'L4ROQj8rhzrJ269XOfdUlSh43'
-        consumer_secret = 'WWReiZIgd8QwgPdiHZHMb84r4rulcVOw4uhUAOyotTC36DlAXu'
-        access_token = '1163443965988724737-ivY7BvxXUiGf9ShpRCuIEvh3JIJsWD'
-        access_token_secret = '46KVcnVm8zZ4XCASebwYNbVkDsrYVI1RRu9jm4Pg0I6dm'
+        consumer_key = lgn.consumer_key  #'L4ROQj8rhzrJ269XOfdUlSh43'
+        consumer_secret = lgn.consumer_secret  #'WWReiZIgd8QwgPdiHZHMb84r4rulcVOw4uhUAOyotTC36DlAXu'
+        access_token = lgn.access_token  #'1163443965988724737-ivY7BvxXUiGf9ShpRCuIEvh3JIJsWD'
+        access_token_secret = lgn.access_token_secret  #'46KVcnVm8zZ4XCASebwYNbVkDsrYVI1RRu9jm4Pg0I6dm'
 
         # attempt authentication
         try:
@@ -290,10 +290,10 @@ def textw(word):
 
 
 def main_fun(astr, icnt):
-    global all_figs, ptweets, mptweets, ntweets, mntweets, tweets
+    global all_figs, ptweets, mptweets, ntweets, mntweets, tweets, lgn
     details=[]
     # creating object of TwitterClient Class
-    api = TwitterClient()
+    api = TwitterClient(lgn)
     search_words = astr
     k=0
     Total_tweet_count = icnt
@@ -381,6 +381,7 @@ db.create_all()
 
 @app.route('/',methods=['GET','POST'])
 def login():
+    global lgn
     delete1()
 
     form1=forms.login1()
@@ -389,7 +390,8 @@ def login():
     if form1.submit.data==True:
         user=Twitter_data.query.get(form1.user1.data)
         if user!=None and user.password==form1.pass1.data:
-            return render_template('index.html')
+            lgn=user
+            return render_template('button.html',lgn=lgn)
         else:
             return render_template('login.html',check=3)
     
@@ -406,6 +408,32 @@ def login():
 
     return render_template('login.html',check=0)
 
+@app.route('/tweet_form',methods=['GET','POST'])
+def tweet_form():
+    global lgn
+    form1=forms.tweet_f()
+    if form1.submit2.data==True:
+        lgn.consumer_key=form1.ck.data
+        lgn.consumer_secret=form1.cs.data
+        lgn.access_token=form1.at.data
+        lgn.access_token_secret=form1.ats.data
+        db.session.add(lgn)
+        db.session.commit()
+        print(lgn.consumer_key)
+        print(lgn.consumer_secret)
+        return render_template('button.html',lgn=lgn)
+
+    return render_template('tweet_form.html',lgn=lgn)
+
+
+@app.route('/button')
+def button():
+    global lgn
+    delete1()
+    return render_template('button.html',lgn=lgn)
+
+
+
 @app.route('/index')
 def index():
     delete1()
@@ -415,13 +443,24 @@ def index():
 @app.route('/main_p')
 def main_p():
     tweet = request.args.get('tweet_w')
-    details,length,total=main_fun(str(tweet), 100)
+    details,length,total=main_fun(tweet, 100)
     return render_template('main_p.html', details=details,length=length,total=total)
+
+
+@app.route('/about')
+def about():
+    return render_template('about.html')
+
+
+
+@app.route('/contact')
+def contact():
+    return render_template('contact.html')
 
 
 @app.errorhandler(404)
 def page_not_found(e):
-    return render_template('sorry.html'), 404
+    return render_template('sorry.html',check=0), 404
 
 
 if __name__ == '__main__':
